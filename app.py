@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 import json
 import os
 from PIL import Image
@@ -124,6 +124,16 @@ st.markdown(
         padding-left: 0.8rem !important;
         padding-right: 0.8rem !important;
         max-width: 600px !important;
+    }
+
+    /* کارت یادداشت روزانه در بالای صفحه */
+    .daily-note-card {
+        background: linear-gradient(135deg, rgba(244, 114, 182, 0.15), rgba(168, 85, 247, 0.18)) !important;
+        border: 1.5px solid rgba(244, 114, 182, 0.45) !important;
+        border-radius: 20px;
+        padding: 16px 18px;
+        margin-bottom: 16px;
+        box-shadow: 0 8px 25px rgba(244, 63, 94, 0.18);
     }
 
     /* تب‌های افقی بالای صفحه */
@@ -295,6 +305,95 @@ if os.path.exists(image_path):
     with col_m:
         st.image(image_path, use_container_width=True)
 
+# =========================================================================
+# 💌 بخش یادداشت روزانه و انگیزه امروز (تغییر روزانه بر اساس تقویم)
+# =========================================================================
+daily_love_quotes = [
+    (
+        "حضور تو مثل یک فنجان چای گرم وسط یک عصر پاییزی، به تمام دنیام آرامش"
+        " میده..."
+    ),
+    (
+        "شاید هر روز با هم حرف بزنیم، اما هر بار شنیدن صدات و دیدن پیامت حس بار"
+        " اول رو داره ❤️"
+    ),
+    (
+        "زیباترین قاب دنیا، لبخند بی‌دلیل و از ته دلیه که روی لبت می‌شینه."
+        " همیشه بخند 🌸"
+    ),
+    (
+        "فاصله‌ها روی نقشه هستن، ولی تو دقیقاً وسط قلب و فکر من زندگی می‌کنی"
+        " ✨"
+    ),
+    (
+        "دنیا شلوغه و پر از هیاهو، ولی کنار تو امن‌ترین و قشنگ‌ترین نقطه جهان"
+        " ساخته میشه 💫"
+    ),
+    (
+        "توی شلوغ‌ترین روزها هم کافیه بهت فکر کنم تا تمام خستگی‌هام پر بکشه و"
+        " بره 🌻"
+    ),
+    (
+        "ممنونم که با اومدنت به زندگیم ثابت کردی مهربونی و صداقت هنوز واقعی‌ترین"
+        " حس دنیاست 💖"
+    ),
+]
+
+daily_motivation_quotes = [
+    (
+        "امروز رو با انرژی شروع کن؛ تو از پس هر چالشی که جلوت قرار بگیره با"
+        " درخشش برمیای! 💪✨"
+    ),
+    (
+        "هیچ‌وقت یادت نره که چقدر باارزش و قوی هستی، به خودت و توانایی‌هات ایمان"
+        " داشته باش 🌟"
+    ),
+    (
+        "هر روز یک شروع تازه‌ست برای ساختن آرزوهات؛ قدم‌های کوچیکت آینده‌های بزرگ"
+        " می‌سازن 🌱"
+    ),
+    (
+        "جهان به لبخند و انرژی مثبتت احتیاج داره، امروز بدرخش و اجازه نده چیزی"
+        " خوشحالیت رو کم کنه ☀️"
+    ),
+    (
+        "تو قوی‌تر از تمام روزهای سختی هستی که پشت سر گذاشتی؛ امروز قراره یک روز"
+        " فوق‌العاده باشه 🚀"
+    ),
+    (
+        "به رویاهات باور داشته باش، چون لیاقت بهترین‌ها دقیقاً متعلق به خودِ"
+        " توئه 💎"
+    ),
+    (
+        "نفس عمیق بکش، لبخند بزن و با اعتماد به نفس به سمت هدفت برو؛ من همیشه"
+        " باورت دارم 🤍"
+    ),
+]
+
+# انتخاب جمله متناظر با روز سال (در طول یک روز ثابت است و فردا خودکار تغییر می‌کند)
+day_of_year = date.today().timetuple().tm_yday
+today_love = daily_love_quotes[day_of_year % len(daily_love_quotes)]
+today_moti = daily_motivation_quotes[day_of_year % len(daily_motivation_quotes)]
+
+st.markdown(
+    f"""
+<div class="daily-note-card">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+        <span style="color: #f472b6; font-weight: 800; font-size: 14px;">💌 یادداشت روزانه تو:</span>
+        <span style="color: #cbd5e1; font-size: 11.5px;">امروز {date.today().strftime('%Y/%m/%d')}</span>
+    </div>
+    <p style="color: #fdf2f8; font-size: 13.5px; line-height: 1.9; margin: 0 0 10px 0;">
+        «{today_love}»
+    </p>
+    <div style="border-top: 1px dashed rgba(244, 114, 182, 0.35); padding-top: 8px;">
+        <span style="color: #a855f7; font-weight: 800; font-size: 13px;">⚡ انگیزه امروز: </span>
+        <span style="color: #e2e8f0; font-size: 13px; line-height: 1.8;">{today_moti}</span>
+    </div>
+</div>
+""",
+    unsafe_allow_html=True,
+)
+
 # تب‌های اصلی
 tabs = st.tabs([
     "⏳ روزشمار زنده",
@@ -314,7 +413,7 @@ with tabs[0]:
     )
     st.markdown(
         "<p style='color:#94a3b8; font-size:12.5px; margin-top:2px;'>۱۷ آگوست"
-        " ۲۰۲۶ | ساعت ۱۳:۰۶ (۱:۰۶ بعد از ظهر)</p>",
+        " ۲۰۲۶ | ساعت ۱۳:۰۶ (۱:۰۶ بعد از ظهر به وقت تهران)</p>",
         unsafe_allow_html=True,
     )
 
@@ -388,7 +487,7 @@ with tabs[0]:
         </div>
 
         <script>
-            // تنظیم ساعت به 13:06 (1:06 PM)
+            // تنظیم ساعت به 13:06 (1:06 PM) با تایم‌زون دقیق ایران
             const startDate = new Date('2026-08-17T13:06:00+03:30');
             function updateLiveTimer() {
                 const now = new Date();
