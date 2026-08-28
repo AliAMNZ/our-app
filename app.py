@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import datetime
 import json
 import os
 from PIL import Image
@@ -12,13 +12,13 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# --- استایل‌دهی اختصاصی دارک، شیشه‌ای و بهینه‌سازی شده برای موبایل ---
+# --- استایل‌دهی اختصاصی، انیمیشن بارش قلب و بهینه‌سازی کامل موبایل ---
 st.markdown(
     """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap');
 
-    /* مخفی‌سازی هدر مشکی و دکمه‌های دیپلوی استریم‌لیت */
+    /* مخفی‌سازی هدر مشکی و دکمه‌های پیش‌فرض استریم‌لیت */
     header[data-testid="stHeader"] {
         display: none !important;
     }
@@ -42,7 +42,7 @@ st.markdown(
         -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(255, 255, 255, 0.15);
         border-radius: 22px;
-        padding: 22px;
+        padding: 24px;
         margin-bottom: 20px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
         transition: all 0.3s ease;
@@ -77,22 +77,22 @@ st.markdown(
     .counter-grid {
         display: flex;
         flex-wrap: wrap;
-        gap: 12px;
+        gap: 15px;
         justify-content: center;
         align-items: center;
-        margin: 15px 0;
+        margin: 20px 0;
     }
     .counter-item {
-        flex: 1 1 calc(30% - 10px);
+        flex: 1 1 calc(22% - 10px);
         min-width: 85px;
-        background: rgba(244, 114, 182, 0.12);
-        border: 1px solid rgba(244, 114, 182, 0.35);
-        border-radius: 18px;
-        padding: 14px 8px;
+        background: rgba(244, 114, 182, 0.14);
+        border: 1.5px solid rgba(244, 114, 182, 0.4);
+        border-radius: 20px;
+        padding: 16px 10px;
         text-align: center;
     }
     .counter-val {
-        font-size: 28px;
+        font-size: 32px;
         font-weight: 900;
         color: #f472b6;
         direction: ltr;
@@ -100,8 +100,8 @@ st.markdown(
         line-height: 1.1;
     }
     .counter-label {
-        font-size: 13px;
-        font-weight: 600;
+        font-size: 14px;
+        font-weight: 700;
         color: #e2e8f0;
         margin-top: 6px;
         text-align: center;
@@ -117,7 +117,7 @@ st.markdown(
         margin-bottom: 8px;
     }
 
-    /* دکمه‌های لمسی و خوش‌فرم */
+    /* دکمه‌های لمسی */
     .stButton>button {
         width: 100%;
         border-radius: 16px;
@@ -135,7 +135,6 @@ st.markdown(
         box-shadow: 0 8px 25px rgba(236, 72, 153, 0.5);
     }
 
-    /* ورودی‌های متن */
     .stTextInput>div>div>input, .stTextArea>div>div>textarea {
         background-color: rgba(255, 255, 255, 0.08) !important;
         border: 1px solid rgba(255, 255, 255, 0.25) !important;
@@ -144,28 +143,61 @@ st.markdown(
         font-weight: 600;
     }
 
-    /* تنظیم رنگ متون رادیوباتن‌ها در دارک مود */
     .stRadio label, .stRadio div, .stRadio p, .stRadio span {
         font-size: 15px !important;
         color: #f1f5f9 !important;
         font-weight: 600 !important;
     }
 
-    /* گوشه‌های گرد عکس سایدبار */
     [data-testid="stSidebar"] img {
         border-radius: 20px;
         box-shadow: 0 8px 25px rgba(0,0,0,0.5);
         border: 2px solid rgba(244, 114, 182, 0.4);
     }
 
-    @media (max-width: 768px) {
-        .hero-title { font-size: 21px; }
-        .counter-val { font-size: 24px; }
+    /* انیمیشن بارش قلب‌های شناور */
+    .heart-bg {
+        position: fixed;
+        top: -10vh;
+        user-select: none;
+        pointer-events: none;
+        z-index: 99999;
+        animation: fall linear forwards;
+    }
+    @keyframes fall {
+        to {
+            transform: translateY(115vh) rotate(360deg);
+            opacity: 0;
+        }
     }
 </style>
+
+<!-- اسکریپت قلب‌های متحرک در لحظه لود صفحه -->
+<script>
+    function spawnHearts() {
+        const symbols = ['💖', '✨', '🌸', '❤️', '💫'];
+        for(let i=0; i<25; i++) {
+            let heart = document.createElement('div');
+            heart.className = 'heart-bg';
+            heart.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 3 + 2.5) + 's';
+            heart.style.fontSize = (Math.random() * 18 + 14) + 'px';
+            heart.style.opacity = Math.random() * 0.7 + 0.3;
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 6000);
+        }
+    }
+    setTimeout(spawnHearts, 300);
+</script>
 """,
     unsafe_allow_html=True,
 )
+
+# پرتاب بادکنک‌ها هنگام باز شدن صفحه (Streamlit Balloons)
+if "balloons_shown" not in st.session_state:
+    st.balloons()
+    st.session_state.balloons_shown = True
 
 # --- نوار کناری (Sidebar) ---
 with st.sidebar:
@@ -187,11 +219,10 @@ with st.sidebar:
     menu = st.radio(
         "انتخاب بخش:",
         [
-            "⏳ روزشمار و لحظه‌نگار ما",
+            "⏳ روزشمار اولین پیام ما",
             "💬 هر سوالی داری ازم بپرس",
             "🚦 خطوط قرمز و ویژگی‌های من",
             "🕌 آزمون احکام و سوالات دینی",
-            "📝 ایده‌های اولین قرارمون",
             "💌 نامه محرمانه",
         ],
         index=0,
@@ -201,100 +232,76 @@ with st.sidebar:
     st.caption("طراحی شده با تمام سلیقه و احساس ❤️")
 
 # ==========================================
-# ۱. بخش روزشمار و تقویم آشنایی
+# ۱. بخش روزشمار اولین پیام
 # ==========================================
-if menu == "⏳ روزشمار و لحظه‌نگار ما":
+if menu == "⏳ روزشمار اولین پیام ما":
     st.markdown(
         '<h1 class="hero-title">⏳ لحظه‌شمار روزهای مشترک ما</h1>',
         unsafe_allow_html=True,
     )
     st.write(
-        "هنوز دستاتو از نزدیک نگرفتم، ولی تک‌تک ثانیه‌هایی که باهات حرف زدم برام"
-        " باارزش‌ترین بودن."
+        "تک‌تک لحظه‌هایی که باهات حرف زدم، زیباترین دقایق روزهام بودن و ساعت"
+        " زندگیم با تو کوک شد..."
     )
 
-    col1, col2 = st.columns(2)
+    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+    st.markdown(
+        "<h3 style='color:#f472b6; margin-top:0;'>📅 از اولین پیامی که بهت"
+        " دادم:</h3>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        "<p style='color:#cbd5e1; font-size:15px;'>۱۷ آگوست ۲۰۲۶ | ساعت ۱:۰۶"
+        " بامداد</p>",
+        unsafe_allow_html=True,
+    )
 
-    with col1:
-        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-        st.subheader("📅 از اولین پیامی که بهت دادم:")
-        st.caption("۱۷ آگوست | ساعت ۱:۰۶ بامداد")
+    # مبدا اولین پیام: ۱۷ آگوست ۲۰۲۶ ساعت ۰۱:۰۶
+    start_date = datetime(2026, 8, 17, 1, 6, 0)
+    now = datetime.now()
 
-        # مبدا اولین پیام: ۱۷ آگوست ۲۰۲۶ ساعت ۰۱:۰۶
-        start_date = datetime(2026, 8, 17, 1, 6)
-        now = datetime.now()
+    if now >= start_date:
         passed_time = now - start_date
-
-        days_passed = max(0, passed_time.days)
-        hours_passed = max(0, (passed_time.seconds // 3600))
-        mins_passed = max(0, ((passed_time.seconds % 3600) // 60))
+        days_passed = passed_time.days
+        hours_passed = passed_time.seconds // 3600
+        mins_passed = (passed_time.seconds % 3600) // 60
+        secs_passed = passed_time.seconds % 60
 
         st.markdown(
             f"""
         <div class="counter-grid">
-            <div class="counter-item"><div class="counter-val">{days_passed}</div><div class="counter-label">روز</div></div>
+            <div class="counter-item"><div class="counter-val">{days_passed}</div><div class="counter-label">روز گذشته</div></div>
             <div class="counter-item"><div class="counter-val">{hours_passed}</div><div class="counter-label">ساعت</div></div>
             <div class="counter-item"><div class="counter-val">{mins_passed}</div><div class="counter-label">دقیقه</div></div>
+            <div class="counter-item"><div class="counter-val">{secs_passed}</div><div class="counter-label">ثانیه</div></div>
         </div>
         """,
             unsafe_allow_html=True,
         )
 
         st.markdown(
-            "<p style='text-align:center; color:#cbd5e1; font-size:14px;"
-            " margin-top:10px;'>از اون ۱:۰۶ شب به بعد، ساعت زندگیم با تو کوک شد"
-            " 🌱</p>",
+            f"""
+        <div style="text-align:center; margin-top:20px; padding:12px; background:rgba(244, 114, 182, 0.08); border-radius:14px;">
+            <p style="color:#fbcfe8; font-size:16px; margin:0; font-weight:700;">
+                ✨ دقیقاً <b>{days_passed} روز</b> از اون شبی که با هم هم‌صحبت شدیم گذشته و بودنت قشنگ‌ترین اتفاق این روزهاست... 🌸
+            </p>
+        </div>
+        """,
             unsafe_allow_html=True,
         )
-        st.markdown("</div>", unsafe_allow_html=True)
+    else:
+        st.info("در انتظار رسیدن به لحظه زیبای آشنایی...")
 
-    with col2:
-        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-        st.subheader("🎯 شمارش معکوس تا اولین دیدار حضوری:")
+    st.markdown("</div>", unsafe_allow_html=True)
 
-        meet_target = date(2026, 12, 25)
-        today = date.today()
-        remaining_days = (meet_target - today).days
-
-        if remaining_days > 0:
-            st.markdown(
-                f"""
-            <div class="counter-grid">
-                <div class="counter-item" style="flex:1 1 100%;">
-                    <div class="counter-val">{remaining_days}</div>
-                    <div class="counter-label">روز مانده تا لحظه دیدار ☕</div>
-                </div>
-            </div>
-            """,
-                unsafe_allow_html=True,
-            )
-            st.markdown(
-                "<p style='text-align:center; color:#cbd5e1; font-size:14px;"
-                " margin-top:10px;'>روزی که بالاخره بدون صفحه گوشی می‌بینمت!</p>",
-                unsafe_allow_html=True,
-            )
-        else:
-            st.markdown(
-                '<div class="counter-val" style="text-align:center;'
-                ' font-size:24px;">بالاخره رسید! 🎉</div>',
-                unsafe_allow_html=True,
-            )
-            st.balloons()
-
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    with st.expander("📌 یادداشت‌های مهم تقویممون"):
+    with st.expander("📌 یادداشت‌های این روزها"):
         st.write(
-            "✨ **۱۷ آگوست - ۰۱:۰۶ بامداد:** شبی که اولین پیام رو فرستادم و"
-            " داستانمون شروع شد."
+            "✨ **۱۷ آگوست - ۰۱:۰۶ بامداد:** شبی که اولین پیام رد و بدل شد و"
+            " این قصه شروع شد."
         )
         st.write(
-            "📞 **اولین مکالمه طولانی:** وقتی که فهمیدم ساعت‌ها حرف زدن باهات"
-            " اصلاً خسته‌کننده نیست."
-        )
-        st.write(
-            "☕ **قرار حضوری:** روزی که قراره روبروی هم بشینیم و چشم توی چشم"
-            " صحبت کنیم."
+            "📞 **ساعت‌ها گفتگو:** وقت‌هایی که فهمیدم صحبت کردن با تو هیچ‌وقت"
+            " تمومی نداره."
         )
 
 # ==========================================
@@ -350,7 +357,7 @@ elif menu == "💬 هر سوالی داری ازم بپرس":
     st.markdown("---")
     st.markdown("### 💡 چند تا از پاسخ‌های شفاف من به سوالات احتمالی تو:")
 
-    with st.expander("❓ اولویت اولت توی یک رابطه جدی چیه؟"):
+    with st.expander("❓ اولویت اولت توی یک رابطه چیه؟"):
         st.write(
             "شفافیت، آرامش متقابل و اینکه بتونیم در هر شرایطی بدون ترس و با"
             " احترام با هم صحبت کنیم."
@@ -586,38 +593,7 @@ elif menu == "🕌 آزمون احکام و سوالات دینی":
             )
 
 # ==========================================
-# ۵. چک‌لیست و ایده‌های اولین قرار
-# ==========================================
-elif menu == "📝 ایده‌های اولین قرارمون":
-    st.markdown(
-        '<h1 class="hero-title">📝 چک‌لیست برنامه‌های اولین قرار</h1>',
-        unsafe_allow_html=True,
-    )
-    st.write(
-        "اینجا برنامه‌هاییه که قراره توی اولین دیدار حضوریمون دونفره تجربه"
-        " کنیم:"
-    )
-
-    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-    c1 = st.checkbox("☕ رفتن به یه کافه دنج با نور ملایم و گفتگو بدون استرس")
-    c2 = st.checkbox("🚶‍♀️ پیاده‌روی طولانی و صحبت درباره همه‌چیز")
-    c3 = st.checkbox("📸 گرفتن اولین عکس دونفره یادگاری")
-    c4 = st.checkbox("🍨 تست کردن یک دسر یا بستنی جدید دونفره")
-    c5 = st.checkbox("🎧 گوش دادن به یه موزیک خاطره‌انگیز مشترک")
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    st.subheader("💡 تو هم ایده خاصی داری؟")
-    user_idea = st.text_input("ایده‌ات برای اولین دیدنمون:")
-    if st.button("ثبت این ایده در دفترچه خاطرات"):
-        if user_idea:
-            st.success(
-                f"ایده «{user_idea}» ثبت شد! حتماً عملی‌ش می‌کنیم 🌟"
-            )
-        else:
-            st.info("چیزی ننوشتی که!")
-
-# ==========================================
-# ۶. نامه محرمانه با راهنمایی معمایی
+# ۵. نامه محرمانه با راهنمایی معمایی
 # ==========================================
 elif menu == "💌 نامه محرمانه":
     st.markdown(
@@ -626,7 +602,6 @@ elif menu == "💌 نامه محرمانه":
     )
     st.write("این نامه فقط با کدی باز میشه که رازش بین خودمونه:")
 
-    # باکس راهنمایی دلنشین و رمزآلود
     st.markdown(
         """
     <div class="glass-card" style="border-right: 4px solid #c084fc; background: rgba(192, 132, 252, 0.08);">
@@ -647,7 +622,6 @@ elif menu == "💌 نامه محرمانه":
         placeholder="رمز را اینجا بنویس...",
     )
 
-    # رمزهای معتبر: ساعت اولین پیام یا تاریخ یا کلمه کلیدی
     valid_passwords = ["0106", "1:06", "17aug", "1708", "love"]
 
     if pwd.strip().lower() in valid_passwords:
@@ -661,7 +635,6 @@ elif menu == "💌 نامه محرمانه":
             شاید این فقط چند خط کد برنامه‌نویسی باشه، ولی تک‌تک خط‌هاش رو با فکر کردن به لبخند و نگاه قشنگت نوشتم.<br>
             درسته که هنوز از نزدیک ندیدمت و فاصله بینمونه، ولی توی قلبم نزدیک‌ترین حس ممکن رو بهت دارم.<br>
             از همون ۱۷ آگوست ساعت ۱:۰۶ بامداد که اولین کلمه بینمون رد و بدل شد، فهمیدم قراره چقدر برام خاص باشی.<br>
-            بی‌صبرانه منتظر اون روزیم که این روزشمار به صفر برسه و بتونم روبروت بشینم و به چشمات نگاه کنم.<br>
             ممنونم که با حضور قشنگت، دنیام رو پر از رنگ و نور کردی ❤️🌻
             </p>
         </div>
