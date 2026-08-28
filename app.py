@@ -6,12 +6,10 @@ import requests
 import streamlit as st
 
 # ==========================================
-# 🔑 اطلاعات تلگرام خودت رو اینجا وارد کن:
+# 🔑 اطلاعات تلگرام خودت (اختیاری):
 # ==========================================
-TELEGRAM_BOT_TOKEN = (
-    "8847767938:AAG97Tu_3CwMVUJ1dGidEJTuxx7mu09_C0k"  # مثلا: '7123456789:AAF...' از BotFather
-)
-TELEGRAM_CHAT_ID = "595612344"  # مثلا: '123456789' عددی از userinfobot
+TELEGRAM_BOT_TOKEN = "8847767938:AAG97Tu_3CwMVUJ1dGidEJTuxx7mu09_C0k"
+TELEGRAM_CHAT_ID = "595612344"
 
 
 def send_to_telegram(question_text):
@@ -47,13 +45,12 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# --- استایل کاملاً ریسپانسیو و انیمیشن شروع صفحه ---
+# --- استایل کاملاً ریسپانسیو و استایل انیمیشن بوسه ---
 st.markdown(
     """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;900&display=swap');
 
-    /* مخفی‌سازی کامل هدر، منوها و سایدبار */
     header[data-testid="stHeader"], [data-testid="stSidebar"], #MainMenu, footer, 
     .stDeployButton, div[data-testid="stDecoration"], div[data-testid="stToolbar"] {
         display: none !important;
@@ -76,7 +73,7 @@ st.markdown(
         max-width: 600px !important;
     }
 
-    /* تب‌های افقی بالای صفحه مخصوص موبایل */
+    /* تب‌های افقی بالای صفحه */
     div[data-baseweb="tab-list"] {
         display: flex !important;
         justify-content: flex-start !important;
@@ -103,7 +100,7 @@ st.markdown(
         border: 1px solid rgba(244, 114, 182, 0.6) !important;
     }
 
-    /* کارت‌های اصلی با چیدمان تمیز */
+    /* کارت‌های شیشه‌ای */
     .glass-card {
         background: rgba(255, 255, 255, 0.06);
         backdrop-filter: blur(16px);
@@ -116,7 +113,7 @@ st.markdown(
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
     }
 
-    /* شبکه شمارنده‌ها: دقیقاً ۲ ستون ثابت */
+    /* شبکه شمارنده‌ها ۲ در ۲ */
     .counter-grid-2x2 {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -167,7 +164,6 @@ st.markdown(
         color: #bbf7d0 !important;
     }
 
-    /* دکمه‌ها و فرم‌ها */
     .stButton>button {
         width: 100%;
         border-radius: 14px;
@@ -193,98 +189,52 @@ st.markdown(
         font-weight: 600 !important;
     }
 
-    /* انیمیشن شروع صفحه (بوسه و ورود) */
-    #kiss-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: radial-gradient(circle, rgba(46, 8, 84, 0.96) 0%, rgba(15, 23, 42, 0.98) 100%);
-        backdrop-filter: blur(20px);
-        z-index: 9999999;
+    /* انیمیشن باز شدن قفل و بوسه عاشقانه */
+    .unlock-kiss-stage {
         display: flex;
-        flex-direction: column;
         justify-content: center;
         align-items: center;
-        pointer-events: none;
-        animation: fadeOutOverlay 0.8s ease 3.2s forwards;
-    }
-
-    .kiss-stage {
         position: relative;
-        width: 280px;
-        height: 180px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        width: 100%;
+        height: 120px;
+        margin: 15px 0;
     }
 
-    .character-boy {
-        font-size: 65px;
-        animation: boyMove 1.2s cubic-bezier(0.25, 1, 0.5, 1) 0.3s forwards;
+    .boy-kiss {
+        font-size: 55px;
+        animation: boyKissMove 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     }
 
-    .character-girl {
-        font-size: 65px;
-        animation: girlMove 1.2s cubic-bezier(0.25, 1, 0.5, 1) 0.3s forwards;
+    .girl-kiss {
+        font-size: 55px;
+        animation: girlKissMove 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     }
 
-    .kiss-heart {
+    .heart-pop {
         position: absolute;
         left: 50%;
-        top: 35%;
+        top: 30%;
         transform: translate(-50%, -50%) scale(0);
-        font-size: 45px;
-        opacity: 0;
-        animation: popKiss 1.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1.3s forwards;
+        font-size: 40px;
+        animation: popHeart 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.8s forwards;
     }
 
-    .kiss-text {
-        color: #f472b6;
-        font-weight: 800;
-        font-size: 17px;
-        margin-top: 15px;
-        opacity: 0;
-        animation: textFade 1.2s ease 1.2s forwards;
-    }
-
-    @keyframes boyMove {
+    @keyframes boyKissMove {
         0% { transform: translateX(-40px); }
-        100% { transform: translateX(62px) rotate(8deg); }
+        100% { transform: translateX(35px) rotate(10deg); }
     }
 
-    @keyframes girlMove {
+    @keyframes girlKissMove {
         0% { transform: translateX(40px); }
-        100% { transform: translateX(-62px) rotate(-8deg); }
+        100% { transform: translateX(-35px) rotate(-10deg); }
     }
 
-    @keyframes popKiss {
+    @keyframes popHeart {
         0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-        40% { transform: translate(-50%, -65%) scale(1.4); opacity: 1; }
-        70% { transform: translate(-50%, -75%) scale(1.1); opacity: 1; }
-        100% { transform: translate(-50%, -85%) scale(1.3); opacity: 0.9; }
-    }
-
-    @keyframes textFade {
-        0% { opacity: 0; transform: translateY(10px); }
-        100% { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeOutOverlay {
-        0% { opacity: 1; visibility: visible; }
-        100% { opacity: 0; visibility: hidden; display: none; }
+        50% { transform: translate(-50%, -70%) scale(1.4); opacity: 1; }
+        100% { transform: translate(-50%, -85%) scale(1.2); opacity: 1; }
     }
 </style>
-
-<div id="kiss-overlay">
-    <div class="kiss-stage">
-        <div class="character-boy">👦🏻</div>
-        <div class="kiss-heart">💖✨</div>
-        <div class="character-girl">👧🏻</div>
-    </div>
-    <div class="kiss-text">خوش اومدی به دنیای دونفره‌مون... ✨</div>
-</div>
 """,
     unsafe_allow_html=True,
 )
@@ -293,7 +243,7 @@ if "balloons_shown" not in st.session_state:
     st.balloons()
     st.session_state.balloons_shown = True
 
-# هدر اختصاصی همراه با عکس و عنوان
+# هدر اختصاصی
 image_path = "photo_2026-08-28_16-40-13.jpg"
 st.markdown(
     """
@@ -312,7 +262,7 @@ if os.path.exists(image_path):
     with col_m:
         st.image(image_path, use_container_width=True)
 
-# تب‌های اصلی مخصوص موبایل
+# تب‌های اصلی
 tabs = st.tabs([
     "⏳ روزشمار",
     "💬 بپرس ازم",
@@ -363,7 +313,7 @@ with tabs[0]:
         )
     st.markdown("</div>", unsafe_allow_html=True)
 
-# ================= 2. بپرس ازم (با ارسال مستقیم به تلگرام) =================
+# ================= 2. بپرس ازم =================
 with tabs[1]:
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
     st.markdown(
@@ -391,7 +341,6 @@ with tabs[1]:
         )
         if st.form_submit_button("💌 ارسال سوال به من"):
             if user_q.strip():
-                # ۱. ذخیره محلی
                 questions_list.append({
                     "question": user_q.strip(),
                     "time": datetime.now().strftime("%Y-%m-%d %H:%M"),
@@ -399,7 +348,6 @@ with tabs[1]:
                 with open(qa_file, "w", encoding="utf-8") as f:
                     json.dump(questions_list, f, ensure_ascii=False, indent=2)
 
-                # ۲. ارسال آنی به تلگرام
                 send_to_telegram(user_q.strip())
 
                 st.balloons()
@@ -519,7 +467,7 @@ with tabs[3]:
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-# ================= 5. نامه محرمانه =================
+# ================= 5. نامه محرمانه با رمز «بوسیدن لب یار» =================
 with tabs[4]:
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
     st.markdown(
@@ -530,7 +478,7 @@ with tabs[4]:
         """
     <div style="background: rgba(192, 132, 252, 0.08); border-right: 3px solid #c084fc; padding: 10px; border-radius: 10px; margin: 10px 0;">
         <p style="font-size:12.5px; color:#e2e8f0; line-height:1.7; margin:0;">
-        💡 <b>راهنما:</b> این قفل با حدس ساده باز نمیشه! باید به مرور زمان و شناخت بیشتر به رمز برسی... شاید ساعتی خاص یا تاریخی باشه که قصه‌مون شروع شد ✨
+        💡 <b>راهنما:</b> این قفل با حدس ساده باز نمیشه! باید به مرور زمان و شناخت بیشتر به رمز برسی... شیرین‌ترین و عاشقانه‌ترین اتفاق دنیا کلید این دره ✨
         </p>
     </div>
     """,
@@ -540,17 +488,42 @@ with tabs[4]:
     pwd = st.text_input(
         "رمز ورود:", type="password", placeholder="رمز را بنویس...", key="mpwd"
     )
-    valid_passwords = ["0106", "1:06", "17aug", "1708", "love"]
+
+    # رمز اصلی و معتبر
+    valid_passwords = [
+        "بوسیدن لب یار",
+        "بوسیدن لب‌ یار",
+        "بوسیدن لب یار ",
+        "بوسیدن‌لب‌یار",
+    ]
 
     if st.button("گشودن قفل 🗝️", key="mbtn_lock"):
-        if pwd.strip().lower() in valid_passwords:
+        cleaned_pwd = (
+            pwd.strip().replace("\u200c", " ").replace("  ", " ").lower()
+        )
+        if (
+            cleaned_pwd in [p.replace("\u200c", " ").lower() for p in valid_passwords]
+            or "بوسیدن" in cleaned_pwd
+            and "یار" in cleaned_pwd
+        ):
             st.balloons()
+
+            # انیمیشن جذاب بوسه هنگام باز شدن
             st.markdown(
                 """
-            <div style="background: rgba(244, 114, 182, 0.1); border: 1.5px solid #f472b6; padding: 14px; border-radius: 14px; margin-top: 10px;">
-                <p style="color:#fdf2f8; font-size:14px; line-height:2; margin:0;">
+            <div class="unlock-kiss-stage">
+                <div class="boy-kiss">👦🏻</div>
+                <div class="heart-pop">💖✨</div>
+                <div class="girl-kiss">👧🏻</div>
+            </div>
+            <div style="text-align: center; margin-bottom: 15px;">
+                <h4 style="color: #f472b6; font-weight: 900; margin: 0;">🎉 تبریک! رمز دل با موفقیت گشوده شد... 💋✨</h4>
+            </div>
+            <div style="background: rgba(244, 114, 182, 0.12); border: 1.5px solid #f472b6; padding: 16px; border-radius: 16px;">
+                <p style="color:#fdf2f8; font-size:14.5px; line-height:2.1; margin:0;">
                     سلام عزیز دلم،<br>
-                    شاید این چند خط کد باشه، ولی تک‌تک خط‌هاش رو با فکر کردن به لبخندت نوشتم. از ۱۷ آگوست ساعت ۱:۰۶ بامداد که هم‌کلام شدیم، فهمیدم چقدر برام خاصی. ممنونم که دنیامو قشنگ‌تر کردی ❤️🌻
+                    شاید این چند خط کد باشه، ولی تک‌تک خط‌هاش رو با تمام احساسم و به یاد لبخند قشنگت نوشتم.<br>
+                    از همون ۱۷ آگوست ساعت ۱:۰۶ بامداد که با هم هم‌صحبت شدیم، دنیام رنگ دیگه‌ای گرفت. ممنونم که هستی و با بودنت همه چیز رو قشنگ‌تر کردی ❤️🌻
                 </p>
             </div>
             """,
@@ -559,6 +532,6 @@ with tabs[4]:
         elif pwd == "":
             st.warning("رمز را وارد نکردی!")
         else:
-            st.error("رمز درست نیست! به مرور زمان کشفش کن 😉")
+            st.error("🔒 رمز درست نیست! به مرور زمان کشفش کن 😉")
 
     st.markdown("</div>", unsafe_allow_html=True)
