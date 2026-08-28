@@ -12,20 +12,19 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# --- استایل کاملاً ریسپانسیو و بدون باگ موبایل ---
+# --- استایل کاملاً ریسپانسیو و انیمیشن شروع صفحه ---
 st.markdown(
     """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;900&display=swap');
 
-    /* مخفی‌سازی کامل هدر، منوها و سایدبار مشکل‌ساز در موبایل */
+    /* مخفی‌سازی کامل هدر، منوها و سایدبار */
     header[data-testid="stHeader"], [data-testid="stSidebar"], #MainMenu, footer, 
     .stDeployButton, div[data-testid="stDecoration"], div[data-testid="stToolbar"] {
         display: none !important;
         visibility: hidden !important;
     }
 
-    /* ریست کامل استایل بدنه */
     html, body, [class*="css"], .stApp {
         font-family: 'Vazirmatn', sans-serif !important;
         direction: rtl !important;
@@ -82,7 +81,7 @@ st.markdown(
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
     }
 
-    /* شبکه شمارنده‌ها: دقیقاً ۲ ستون ثابت بدون شکستن متن */
+    /* شبکه شمارنده‌ها: دقیقاً ۲ ستون ثابت */
     .counter-grid-2x2 {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -159,38 +158,101 @@ st.markdown(
         font-weight: 600 !important;
     }
 
-    /* انیمیشن بارش ملایم قلب‌ها */
-    .heart-bg {
+    /* ===================================================
+       انیمیشن ورودی رمانتیک (بوسه دو کاراکتر و محو شدن)
+    =================================================== */
+    #kiss-overlay {
         position: fixed;
-        top: -5vh;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: radial-gradient(circle, rgba(46, 8, 84, 0.96) 0%, rgba(15, 23, 42, 0.98) 100%);
+        backdrop-filter: blur(20px);
+        z-index: 9999999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
         pointer-events: none;
-        z-index: 99999;
-        animation: fall linear forwards;
+        animation: fadeOutOverlay 0.8s ease 3.2s forwards;
     }
-    @keyframes fall {
-        to {
-            transform: translateY(105vh) rotate(360deg);
-            opacity: 0;
-        }
+
+    .kiss-stage {
+        position: relative;
+        width: 280px;
+        height: 180px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .character-boy {
+        font-size: 65px;
+        animation: boyMove 1.2s cubic-bezier(0.25, 1, 0.5, 1) 0.3s forwards;
+    }
+
+    .character-girl {
+        font-size: 65px;
+        animation: girlMove 1.2s cubic-bezier(0.25, 1, 0.5, 1) 0.3s forwards;
+    }
+
+    .kiss-heart {
+        position: absolute;
+        left: 50%;
+        top: 35%;
+        transform: translate(-50%, -50%) scale(0);
+        font-size: 45px;
+        opacity: 0;
+        animation: popKiss 1.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1.3s forwards;
+    }
+
+    .kiss-text {
+        color: #f472b6;
+        font-weight: 800;
+        font-size: 17px;
+        margin-top: 15px;
+        opacity: 0;
+        animation: textFade 1.2s ease 1.2s forwards;
+    }
+
+    @keyframes boyMove {
+        0% { transform: translateX(-40px); }
+        100% { transform: translateX(62px) rotate(8deg); }
+    }
+
+    @keyframes girlMove {
+        0% { transform: translateX(40px); }
+        100% { transform: translateX(-62px) rotate(-8deg); }
+    }
+
+    @keyframes popKiss {
+        0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+        40% { transform: translate(-50%, -65%) scale(1.4); opacity: 1; }
+        70% { transform: translate(-50%, -75%) scale(1.1); opacity: 1; }
+        100% { transform: translate(-50%, -85%) scale(1.3); opacity: 0.9; }
+    }
+
+    @keyframes textFade {
+        0% { opacity: 0; transform: translateY(10px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeOutOverlay {
+        0% { opacity: 1; visibility: visible; }
+        100% { opacity: 0; visibility: hidden; display: none; }
     }
 </style>
 
-<script>
-    function spawnHearts() {
-        const symbols = ['💖', '✨', '🌸', '❤️'];
-        for(let i=0; i<18; i++) {
-            let heart = document.createElement('div');
-            heart.className = 'heart-bg';
-            heart.innerText = symbols[Math.floor(Math.random() * symbols.length)];
-            heart.style.left = Math.random() * 95 + 'vw';
-            heart.style.animationDuration = (Math.random() * 2.5 + 2.5) + 's';
-            heart.style.fontSize = (Math.random() * 14 + 14) + 'px';
-            document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 5000);
-        }
-    }
-    setTimeout(spawnHearts, 200);
-</script>
+<!-- پرده انیمیشن ورودی -->
+<div id="kiss-overlay">
+    <div class="kiss-stage">
+        <div class="character-boy">👦🏻</div>
+        <div class="kiss-heart">💖✨</div>
+        <div class="character-girl">👧🏻</div>
+    </div>
+    <div class="kiss-text">خوش اومدی به دنیای دونفره‌مون... ✨</div>
+</div>
 """,
     unsafe_allow_html=True,
 )
@@ -199,7 +261,7 @@ if "balloons_shown" not in st.session_state:
     st.balloons()
     st.session_state.balloons_shown = True
 
-# هدر اختصاصی همراه با عکس گرد و عنوان
+# هدر اختصاصی همراه با عکس و عنوان
 image_path = "photo_2026-08-28_16-40-13.jpg"
 st.markdown(
     """
