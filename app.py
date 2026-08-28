@@ -45,7 +45,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# --- استایل کاملاً ریسپانسیو و استایل انیمیشن بوسه ---
+# --- استایل کاملاً ریسپانسیو، دارک و افکت‌های زنده ---
 st.markdown(
     """
 <style>
@@ -73,7 +73,7 @@ st.markdown(
         max-width: 600px !important;
     }
 
-    /* تب‌های افقی بالای صفحه */
+    /* تب‌های افقی بالای صفحه مخصوص موبایل */
     div[data-baseweb="tab-list"] {
         display: flex !important;
         justify-content: flex-start !important;
@@ -113,8 +113,8 @@ st.markdown(
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
     }
 
-    /* شبکه شمارنده‌ها ۲ در ۲ */
-    .counter-grid-2x2 {
+    /* ساختار گرید تایمر لایو ۲ در ۲ */
+    .live-counter-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 10px;
@@ -122,24 +122,26 @@ st.markdown(
         direction: rtl;
     }
 
-    .counter-box {
+    .live-counter-box {
         background: rgba(244, 114, 182, 0.12);
         border: 1px solid rgba(244, 114, 182, 0.35);
         border-radius: 16px;
         padding: 12px 6px;
         text-align: center;
+        transition: transform 0.2s;
     }
 
-    .counter-val {
-        font-size: 26px;
+    .live-val {
+        font-size: 28px;
         font-weight: 900;
         color: #f472b6;
         direction: ltr;
         line-height: 1.1;
+        font-variant-numeric: tabular-nums;
     }
 
-    .counter-label {
-        font-size: 12px;
+    .live-lbl {
+        font-size: 12.5px;
         font-weight: 700;
         color: #cbd5e1;
         margin-top: 4px;
@@ -264,54 +266,73 @@ if os.path.exists(image_path):
 
 # تب‌های اصلی
 tabs = st.tabs([
-    "⏳ روزشمار",
+    "⏳ روزشمار زنده",
     "💬 بپرس ازم",
     "🚦 مرزهای من",
     "🕌 آزمون احکام",
     "💌 نامه محرمانه",
 ])
 
-# ================= 1. روزشمار =================
+# ================= 1. روزشمار زنده (Live Timer با JS) =================
 with tabs[0]:
-    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
     st.markdown(
-        "<h4 style='color:#f472b6; margin:0;'>📅 از اولین پیامی که بهت"
-        " دادم:</h4>",
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        "<p style='color:#94a3b8; font-size:12.5px; margin-top:2px;'>۱۷ آگوست"
-        " ۲۰۲۶ | ساعت ۱:۰۶ بامداد</p>",
-        unsafe_allow_html=True,
-    )
-
-    start_date = datetime(2026, 8, 17, 1, 6, 0)
-    now = datetime.now()
-
-    if now >= start_date:
-        passed_time = now - start_date
-        days_passed = passed_time.days
-        hours_passed = passed_time.seconds // 3600
-        mins_passed = (passed_time.seconds % 3600) // 60
-        secs_passed = passed_time.seconds % 60
-
-        st.markdown(
-            f"""
-        <div class="counter-grid-2x2">
-            <div class="counter-box"><div class="counter-val">{days_passed}</div><div class="counter-label">روز گذشته</div></div>
-            <div class="counter-box"><div class="counter-val">{hours_passed}</div><div class="counter-label">ساعت</div></div>
-            <div class="counter-box"><div class="counter-val">{mins_passed}</div><div class="counter-label">دقیقه</div></div>
-            <div class="counter-box"><div class="counter-val">{secs_passed}</div><div class="counter-label">ثانیه</div></div>
+        """
+    <div class="glass-card">
+        <h4 style="color:#f472b6; margin:0;">📅 از اولین پیامی که بهت دادم:</h4>
+        <p style="color:#94a3b8; font-size:12.5px; margin-top:2px;">۱۷ آگوست ۲۰۲۶ | ساعت ۱:۰۶ بامداد</p>
+        
+        <div class="live-counter-grid">
+            <div class="live-counter-box"><div id="live-days" class="live-val">0</div><div class="live-lbl">روز گذشته</div></div>
+            <div class="live-counter-box"><div id="live-hours" class="live-val">00</div><div class="live-lbl">ساعت</div></div>
+            <div class="live-counter-box"><div id="live-mins" class="live-val">00</div><div class="live-lbl">دقیقه</div></div>
+            <div class="live-counter-box"><div id="live-secs" class="live-val">00</div><div class="live-lbl">ثانیه (زنده ⚡)</div></div>
         </div>
+
         <div style="text-align:center; margin-top:10px; padding:10px; background:rgba(244, 114, 182, 0.08); border-radius:12px;">
-            <p style="color:#fbcfe8; font-size:13.5px; margin:0; font-weight:700;">
-                ✨ دقیقاً <b>{days_passed} روز</b> از اون شبی که داستانمون شروع شد گذشته... 🌸
+            <p id="live-summary" style="color:#fbcfe8; font-size:13.5px; margin:0; font-weight:700;">
+                ✨ در حال محاسبه لحظه‌ها... 🌸
             </p>
         </div>
-        """,
-            unsafe_allow_html=True,
-        )
-    st.markdown("</div>", unsafe_allow_html=True)
+    </div>
+
+    <script>
+    (function() {
+        const startDate = new Date('2026-08-17T01:06:00');
+        
+        function updateLiveTimer() {
+            const now = new Date();
+            const diffMs = now - startDate;
+
+            if (diffMs > 0) {
+                const totalSeconds = Math.floor(diffMs / 1000);
+                const days = Math.floor(totalSeconds / 86400);
+                const hours = Math.floor((totalSeconds % 86400) / 3600);
+                const mins = Math.floor((totalSeconds % 3600) / 60);
+                const secs = totalSeconds % 60;
+
+                const elDays = document.getElementById('live-days');
+                const elHours = document.getElementById('live-hours');
+                const elMins = document.getElementById('live-mins');
+                const elSecs = document.getElementById('live-secs');
+                const elSummary = document.getElementById('live-summary');
+
+                if (elDays) elDays.innerText = days;
+                if (elHours) elHours.innerText = hours < 10 ? '0' + hours : hours;
+                if (elMins) elMins.innerText = mins < 10 ? '0' + mins : mins;
+                if (elSecs) elSecs.innerText = secs < 10 ? '0' + secs : secs;
+                if (elSummary) {
+                    elSummary.innerHTML = `✨ دقیقاً <b>${days} روز</b> از اون شبی که داستانمون شروع شد گذشته... 🌸`;
+                }
+            }
+        }
+
+        setInterval(updateLiveTimer, 1000);
+        updateLiveTimer();
+    })();
+    </script>
+    """,
+        unsafe_allow_html=True,
+    )
 
 # ================= 2. بپرس ازم =================
 with tabs[1]:
@@ -467,7 +488,7 @@ with tabs[3]:
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-# ================= 5. نامه محرمانه با رمز «بوسیدن لب یار» =================
+# ================= 5. نامه محرمانه =================
 with tabs[4]:
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
     st.markdown(
@@ -489,7 +510,6 @@ with tabs[4]:
         "رمز ورود:", type="password", placeholder="رمز را بنویس...", key="mpwd"
     )
 
-    # رمز اصلی و معتبر
     valid_passwords = [
         "بوسیدن لب یار",
         "بوسیدن لب‌ یار",
@@ -508,7 +528,6 @@ with tabs[4]:
         ):
             st.balloons()
 
-            # انیمیشن جذاب بوسه هنگام باز شدن
             st.markdown(
                 """
             <div class="unlock-kiss-stage">
