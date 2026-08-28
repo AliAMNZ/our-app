@@ -2,7 +2,42 @@ from datetime import datetime
 import json
 import os
 from PIL import Image
+import requests
 import streamlit as st
+
+# ==========================================
+# 🔑 اطلاعات تلگرام خودت رو اینجا وارد کن:
+# ==========================================
+TELEGRAM_BOT_TOKEN = (
+    "8847767938:AAG97Tu_3CwMVUJ1dGidEJTuxx7mu09_C0k"  # مثلا: '7123456789:AAF...' از BotFather
+)
+TELEGRAM_CHAT_ID = "595612344"  # مثلا: '123456789' عددی از userinfobot
+
+
+def send_to_telegram(question_text):
+    """ارسال مستقیم سوال به تلگرام ادمین"""
+    if (
+        TELEGRAM_BOT_TOKEN != "YOUR_BOT_TOKEN_HERE"
+        and TELEGRAM_CHAT_ID != "YOUR_CHAT_ID_HERE"
+    ):
+        try:
+            url = (
+                f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+            )
+            now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+            payload = {
+                "chat_id": TELEGRAM_CHAT_ID,
+                "text": (
+                    f"💌 **یک سوال جدید در وب‌سایت ثبت شد!**\n\n"
+                    f"🕒 زمان: `{now_str}`\n"
+                    f"💭 متن سوال:\n{question_text}"
+                ),
+                "parse_mode": "Markdown",
+            }
+            requests.post(url, json=payload, timeout=8)
+        except Exception as e:
+            print(f"Telegram error: {e}")
+
 
 # --- تنظیمات صفحه مخصوص موبایل ---
 st.set_page_config(
@@ -41,7 +76,7 @@ st.markdown(
         max-width: 600px !important;
     }
 
-    /* استایل تب‌های افقی بالای صفحه مخصوص موبایل */
+    /* تب‌های افقی بالای صفحه مخصوص موبایل */
     div[data-baseweb="tab-list"] {
         display: flex !important;
         justify-content: flex-start !important;
@@ -158,9 +193,7 @@ st.markdown(
         font-weight: 600 !important;
     }
 
-    /* ===================================================
-       انیمیشن ورودی رمانتیک (بوسه دو کاراکتر و محو شدن)
-    =================================================== */
+    /* انیمیشن شروع صفحه (بوسه و ورود) */
     #kiss-overlay {
         position: fixed;
         top: 0;
@@ -244,7 +277,6 @@ st.markdown(
     }
 </style>
 
-<!-- پرده انیمیشن ورودی -->
 <div id="kiss-overlay">
     <div class="kiss-stage">
         <div class="character-boy">👦🏻</div>
@@ -280,7 +312,7 @@ if os.path.exists(image_path):
     with col_m:
         st.image(image_path, use_container_width=True)
 
-# تب‌های ناوبری اصلی (مخصوص موبایل)
+# تب‌های اصلی مخصوص موبایل
 tabs = st.tabs([
     "⏳ روزشمار",
     "💬 بپرس ازم",
@@ -331,7 +363,7 @@ with tabs[0]:
         )
     st.markdown("</div>", unsafe_allow_html=True)
 
-# ================= 2. بپرس ازم =================
+# ================= 2. بپرس ازم (با ارسال مستقیم به تلگرام) =================
 with tabs[1]:
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
     st.markdown(
@@ -359,12 +391,17 @@ with tabs[1]:
         )
         if st.form_submit_button("💌 ارسال سوال به من"):
             if user_q.strip():
+                # ۱. ذخیره محلی
                 questions_list.append({
                     "question": user_q.strip(),
                     "time": datetime.now().strftime("%Y-%m-%d %H:%M"),
                 })
                 with open(qa_file, "w", encoding="utf-8") as f:
                     json.dump(questions_list, f, ensure_ascii=False, indent=2)
+
+                # ۲. ارسال آنی به تلگرام
+                send_to_telegram(user_q.strip())
+
                 st.balloons()
                 st.success("سوالت برام ثبت شد! حتماً با دقت بهت جواب میدم ✨")
             else:
