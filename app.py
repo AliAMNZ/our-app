@@ -9,15 +9,15 @@ import streamlit.components.v1 as components
 # ==========================================
 # 🔑 اطلاعات تلگرام خودت (اختیاری):
 # ==========================================
-TELEGRAM_BOT_TOKEN = "8847767938:AAG97Tu_3CwMVUJ1dGidEJTuxx7mu09_C0k"
-TELEGRAM_CHAT_ID = "595612344"
+TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"
+TELEGRAM_CHAT_ID = "YOUR_CHAT_ID_HERE"
 
 
 def send_to_telegram(question_text):
     """ارسال مستقیم سوال به تلگرام ادمین"""
     if (
-        TELEGRAM_BOT_TOKEN != "8847767938:AAG97Tu_3CwMVUJ1dGidEJTuxx7mu09_C0k"
-        and TELEGRAM_CHAT_ID != "595612344"
+        TELEGRAM_BOT_TOKEN != "YOUR_BOT_TOKEN_HERE"
+        and TELEGRAM_CHAT_ID != "YOUR_CHAT_ID_HERE"
     ):
         try:
             url = (
@@ -314,7 +314,7 @@ with tabs[0]:
     )
     st.markdown(
         "<p style='color:#94a3b8; font-size:12.5px; margin-top:2px;'>۱۷ آگوست"
-        " ۲۰۲۶ | ساعت ۱:۰۶ بامداد</p>",
+        " ۲۰۲۶ | ساعت ۱۳:۰۶ (۱:۰۶ بعد از ظهر)</p>",
         unsafe_allow_html=True,
     )
 
@@ -388,7 +388,8 @@ with tabs[0]:
         </div>
 
         <script>
-            const startDate = new Date('2026-08-17T01:06:00');
+            // تنظیم ساعت به 13:06 (1:06 PM)
+            const startDate = new Date('2026-08-17T13:06:00');
             function updateLiveTimer() {
                 const now = new Date();
                 const diffMs = now - startDate;
@@ -409,7 +410,7 @@ with tabs[0]:
                     if(elHours) elHours.innerText = hours < 10 ? '0' + hours : hours;
                     if(elMins) elMins.innerText = mins < 10 ? '0' + mins : mins;
                     if(elSecs) elSecs.innerText = secs < 10 ? '0' + secs : secs;
-                    if(elSumm) elSumm.innerHTML = `✨ دقیقاً <b>${days} روز</b> از اون شبی که داستانمون شروع شد گذشته... 🌸`;
+                    if(elSumm) elSumm.innerHTML = `✨ دقیقاً <b>${days} روز</b> از اون لحظه‌ای که داستانمون شروع شد گذشته... 🌸`;
                 }
             }
             setInterval(updateLiveTimer, 1000);
@@ -628,7 +629,7 @@ with tabs[4]:
                 <p style="color:#fdf2f8; font-size:14.5px; line-height:2.1; margin:0;">
                     سلام عزیز دلم،<br>
                     شاید این چند خط کد باشه، ولی تک‌تک خط‌هاش رو با تمام احساسم و به یاد لبخند قشنگت نوشتم.<br>
-                    از همون ۱۷ آگوست ساعت ۱:۰۶ بامداد که با هم هم‌صحبت شدیم، دنیام رنگ دیگه‌ای گرفت. ممنونم که هستی و با بودنت همه چیز رو قشنگ‌تر کردی ❤️🌻
+                    از همون ۱۷ آگوست ساعت ۱۳:۰۶ (۱:۰۶ ظهر) که با هم هم‌صحبت شدیم، دنیام رنگ دیگه‌ای گرفت. ممنونم که هستی و با بودنت همه چیز رو قشنگ‌تر کردی ❤️🌻
                 </p>
             </div>
             """,
