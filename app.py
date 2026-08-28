@@ -9,15 +9,15 @@ import streamlit.components.v1 as components
 # ==========================================
 # 🔑 اطلاعات تلگرام خودت (اختیاری):
 # ==========================================
-TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"
-TELEGRAM_CHAT_ID = "YOUR_CHAT_ID_HERE"
+TELEGRAM_BOT_TOKEN = "8847767938:AAG97Tu_3CwMVUJ1dGidEJTuxx7mu09_C0k"
+TELEGRAM_CHAT_ID = "595612344"
 
 
 def send_to_telegram(question_text):
     """ارسال مستقیم سوال به تلگرام ادمین"""
     if (
-        TELEGRAM_BOT_TOKEN != "YOUR_BOT_TOKEN_HERE"
-        and TELEGRAM_CHAT_ID != "YOUR_CHAT_ID_HERE"
+        TELEGRAM_BOT_TOKEN != "8847767938:AAG97Tu_3CwMVUJ1dGidEJTuxx7mu09_C0k"
+        and TELEGRAM_CHAT_ID != "595612344"
     ):
         try:
             url = (
@@ -389,7 +389,7 @@ with tabs[0]:
 
         <script>
             // تنظیم ساعت به 13:06 (1:06 PM)
-            const startDate = new Date('2026-08-17T13:06:00');
+            const startDate = new Date('2026-08-17T13:06:00+03:30');
             function updateLiveTimer() {
                 const now = new Date();
                 const diffMs = now - startDate;
