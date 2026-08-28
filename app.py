@@ -16,8 +16,8 @@ TELEGRAM_CHAT_ID = "595612344"
 def send_to_telegram(question_text):
     """ارسال مستقیم سوال به تلگرام ادمین"""
     if (
-        TELEGRAM_BOT_TOKEN != "YOUR_BOT_TOKEN_HERE"
-        and TELEGRAM_CHAT_ID != "YOUR_CHAT_ID_HERE"
+        TELEGRAM_BOT_TOKEN != "8847767938:AAG97Tu_3CwMVUJ1dGidEJTuxx7mu09_C0k"
+        and TELEGRAM_CHAT_ID != "595612344"
     ):
         try:
             url = (
@@ -46,7 +46,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# --- استایل کاملاً ریسپانسیو و استایل انیمیشن‌ها ---
+# --- استایل پس‌زمینه عاشقانه با نمادهای شناور و ریسپانسیو موبایل ---
 st.markdown(
     """
 <style>
@@ -62,11 +62,63 @@ st.markdown(
         font-family: 'Vazirmatn', sans-serif !important;
         direction: rtl !important;
         text-align: right !important;
-        background: radial-gradient(circle at top, #1e1b4b 0%, #0f172a 60%, #2e0854 100%) !important;
+        background: #0f0c20 !important;
         color: #f8fafc !important;
+        overflow-x: hidden;
+    }
+
+    /* بک‌گراند گرادیانت با اورلی متحرک */
+    .stApp::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: radial-gradient(circle at 15% 15%, rgba(244, 63, 94, 0.22) 0%, transparent 45%),
+                    radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.25) 0%, transparent 45%),
+                    radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.15) 0%, #0b071a 100%);
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    /* المان‌های معلق عاشقانه در پس‌زمینه */
+    .floating-romantic-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+    }
+
+    .float-item {
+        position: absolute;
+        user-select: none;
+        opacity: 0.28;
+        filter: drop-shadow(0 0 8px rgba(244, 114, 182, 0.4));
+        animation: floatAround 14s infinite ease-in-out alternate;
+    }
+
+    .f1 { top: 8%; left: 8%; font-size: 32px; animation-duration: 16s; }
+    .f2 { top: 22%; right: 10%; font-size: 38px; animation-duration: 18s; animation-delay: -2s; }
+    .f3 { top: 52%; left: 6%; font-size: 34px; animation-duration: 15s; animation-delay: -5s; }
+    .f4 { top: 70%; right: 8%; font-size: 40px; animation-duration: 20s; animation-delay: -3s; }
+    .f5 { top: 88%; left: 20%; font-size: 30px; animation-duration: 14s; animation-delay: -7s; }
+    .f6 { top: 40%; right: 14%; font-size: 28px; animation-duration: 17s; animation-delay: -4s; }
+    .f7 { top: 80%; left: 80%; font-size: 36px; animation-duration: 19s; animation-delay: -1s; }
+
+    @keyframes floatAround {
+        0% { transform: translateY(0px) rotate(0deg) scale(1); }
+        50% { transform: translateY(-30px) rotate(12deg) scale(1.1); }
+        100% { transform: translateY(20px) rotate(-10deg) scale(0.95); }
     }
 
     .main .block-container {
+        position: relative;
+        z-index: 1;
         padding-top: 1.2rem !important;
         padding-bottom: 2rem !important;
         padding-left: 0.8rem !important;
@@ -82,12 +134,12 @@ st.markdown(
         white-space: nowrap !important;
         gap: 6px !important;
         padding-bottom: 8px !important;
-        border-bottom: 1px solid rgba(244, 114, 182, 0.2) !important;
+        border-bottom: 1px solid rgba(244, 114, 182, 0.25) !important;
     }
 
     button[data-baseweb="tab"] {
-        background: rgba(255, 255, 255, 0.06) !important;
-        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        background: rgba(255, 255, 255, 0.07) !important;
+        border: 1px solid rgba(255, 255, 255, 0.18) !important;
         border-radius: 14px !important;
         padding: 8px 14px !important;
         color: #e2e8f0 !important;
@@ -98,20 +150,21 @@ st.markdown(
     button[data-baseweb="tab"][aria-selected="true"] {
         background: linear-gradient(90deg, #ec4899, #8b5cf6) !important;
         color: #ffffff !important;
-        border: 1px solid rgba(244, 114, 182, 0.6) !important;
+        border: 1px solid rgba(244, 114, 182, 0.7) !important;
+        box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
     }
 
     /* کارت‌های شیشه‌ای */
     .glass-card {
-        background: rgba(255, 255, 255, 0.06);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(22, 16, 44, 0.65) !important;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(244, 114, 182, 0.25);
         border-radius: 20px;
         padding: 18px 14px;
         margin-top: 14px;
         margin-bottom: 16px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
 
     /* کارت‌های ویژگی و خط قرمز */
@@ -123,12 +176,12 @@ st.markdown(
         line-height: 1.8;
     }
     .red-flag {
-        background: rgba(239, 68, 68, 0.15);
+        background: rgba(239, 68, 68, 0.18);
         border-right: 4px solid #ef4444;
         color: #fecaca !important;
     }
     .green-flag {
-        background: rgba(34, 197, 94, 0.15);
+        background: rgba(34, 197, 94, 0.18);
         border-right: 4px solid #22c55e;
         color: #bbf7d0 !important;
     }
@@ -204,6 +257,17 @@ st.markdown(
         100% { transform: translate(-50%, -85%) scale(1.2); opacity: 1; }
     }
 </style>
+
+<!-- نمادهای شناور و رمانتیک در بک‌گراند -->
+<div class="floating-romantic-bg">
+    <div class="float-item f1">👩‍❤️‍💋‍👨</div>
+    <div class="float-item f2">💖</div>
+    <div class="float-item f3">✨</div>
+    <div class="float-item f4">💋</div>
+    <div class="float-item f5">💕</div>
+    <div class="float-item f6">🌹</div>
+    <div class="float-item f7">👩‍❤️‍👨</div>
+</div>
 """,
     unsafe_allow_html=True,
 )
@@ -278,7 +342,7 @@ with tabs[0]:
                 direction: rtl;
             }
             .live-counter-box {
-                background: rgba(244, 114, 182, 0.12);
+                background: rgba(244, 114, 182, 0.14);
                 border: 1px solid rgba(244, 114, 182, 0.35);
                 border-radius: 16px;
                 padding: 12px 6px;
@@ -302,7 +366,7 @@ with tabs[0]:
                 text-align: center;
                 margin-top: 10px;
                 padding: 10px;
-                background: rgba(244, 114, 182, 0.08);
+                background: rgba(244, 114, 182, 0.1);
                 border-radius: 12px;
             }
             .summary-text {
@@ -533,7 +597,6 @@ with tabs[4]:
         "رمز ورود:", type="password", placeholder="رمز را بنویس...", key="mpwd"
     )
 
-    # رمز اصلی و مشتقات احتمالی
     valid_passwords = [
         "بوسیدن لب یار",
         "بوسیدن لب‌ یار",
