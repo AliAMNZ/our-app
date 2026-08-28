@@ -12,6 +12,11 @@ import streamlit.components.v1 as components
 TELEGRAM_BOT_TOKEN = "8847767938:AAG97Tu_3CwMVUJ1dGidEJTuxx7mu09_C0k"
 TELEGRAM_CHAT_ID = "595612344"
 
+# ==========================================
+# 🔒 رمز ورود به کل سایت (صفحه اول)
+# ==========================================
+SITE_ACCESS_PASSWORD = "یه بوس طلبم"
+
 
 def send_to_telegram(question_text):
     """ارسال مستقیم سوال به تلگرام ادمین"""
@@ -43,7 +48,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# --- استایل پس‌زمینه عاشقانه با نمادهای شناور و ریسپانسیو موبایل ---
+# --- استایل پایه و مشترک ---
 st.markdown(
     """
 <style>
@@ -64,7 +69,6 @@ st.markdown(
         overflow-x: hidden;
     }
 
-    /* بک‌گراند گرادیانت با اورلی متحرک */
     .stApp::before {
         content: "";
         position: fixed;
@@ -79,7 +83,6 @@ st.markdown(
         pointer-events: none;
     }
 
-    /* المان‌های معلق عاشقانه در پس‌زمینه */
     .floating-romantic-bg {
         position: fixed;
         top: 0;
@@ -123,7 +126,6 @@ st.markdown(
         max-width: 600px !important;
     }
 
-    /* کارت یادداشت روزانه در بالای صفحه */
     .daily-note-card {
         background: linear-gradient(135deg, rgba(244, 114, 182, 0.15), rgba(168, 85, 247, 0.18)) !important;
         border: 1.5px solid rgba(244, 114, 182, 0.45) !important;
@@ -133,7 +135,6 @@ st.markdown(
         box-shadow: 0 8px 25px rgba(244, 63, 94, 0.18);
     }
 
-    /* تب‌های افقی بالای صفحه */
     div[data-baseweb="tab-list"] {
         display: flex !important;
         justify-content: flex-start !important;
@@ -161,7 +162,6 @@ st.markdown(
         box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
     }
 
-    /* کارت‌های شیشه‌ای */
     .glass-card {
         background: rgba(22, 16, 44, 0.65) !important;
         backdrop-filter: blur(20px);
@@ -174,7 +174,6 @@ st.markdown(
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
 
-    /* کارت‌های ویژگی و خط قرمز */
     .flag-card {
         border-radius: 14px;
         padding: 12px 14px;
@@ -218,7 +217,6 @@ st.markdown(
         font-weight: 600 !important;
     }
 
-    /* انیمیشن باز شدن قفل و بوسه عاشقانه */
     .unlock-kiss-stage {
         display: flex;
         justify-content: center;
@@ -265,7 +263,7 @@ st.markdown(
     }
 </style>
 
-<!-- نمادهای شناور و رمانتیک در بک‌گراند -->
+<!-- نمادهای شناور در پس‌زمینه -->
 <div class="floating-romantic-bg">
     <div class="float-item f1">👩‍❤️‍💋‍👨</div>
     <div class="float-item f2">💖</div>
@@ -279,6 +277,74 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# =========================================================================
+# 🔒 گیت ورود و احراز هویت اولیه صفحه
+# =========================================================================
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False
+
+if not st.session_state.authenticated:
+    st.markdown(
+        """
+    <div class="glass-card" style="text-align: center; margin-top: 35px; padding: 25px 16px;">
+        <div style="font-size: 48px; margin-bottom: 8px;">🔐</div>
+        <h3 style="background: linear-gradient(90deg, #f472b6, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; margin: 0; font-size: 21px;">
+            ورود به دنیای اختصاصی ما
+        </h3>
+        <p style="color: #cbd5e1; font-size: 13px; margin: 8px 0 16px 0; line-height: 1.8;">
+            این فضا کاملاً شخصی و فقط برای خاص‌ترین مخاطب دنیا ساخته شده است ✨
+        </p>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    with st.form("site_login_form"):
+        entered_pass = st.text_input(
+            "رمز ورود:",
+            type="password",
+            placeholder="رمز را اینجا بنویس...",
+            key="login_box",
+        )
+        login_btn = st.form_submit_button("ورود به سایت 🗝️")
+
+    if login_btn:
+        cleaned_in = (
+            entered_pass.strip()
+            .replace("\u200c", " ")
+            .replace("  ", " ")
+            .lower()
+        )
+        target_pass = (
+            SITE_ACCESS_PASSWORD.strip()
+            .replace("\u200c", " ")
+            .replace("  ", " ")
+            .lower()
+        )
+
+        valid_entries = [
+            target_pass,
+            "یه بوس طلبم",
+            "یک بوس طلبم",
+            "یه بوسه طلبم",
+            "یه بوس طلبت",
+        ]
+
+        if cleaned_in in valid_entries or (
+            "بوس" in cleaned_in and "طلب" in cleaned_in
+        ):
+            st.session_state.authenticated = True
+            st.rerun()
+        elif entered_pass == "":
+            st.warning("لطفاً رمز ورود را بنویسید!")
+        else:
+            st.error("🔒 رمز نادرست است! این صفحه فقط برای صاحب اصلی آن است 😉")
+
+    st.stop()  # تا احراز هویت نشود، هیچ کدی فراتر از اینجا اجرا نمی‌شود
+
+# =========================================================================
+# محتوای اصلی سایت (فقط بعد از ورود موفق)
+# =========================================================================
 if "balloons_shown" not in st.session_state:
     st.balloons()
     st.session_state.balloons_shown = True
@@ -302,9 +368,7 @@ if os.path.exists(image_path):
     with col_m:
         st.image(image_path, use_container_width=True)
 
-# =========================================================================
-# 💌 بخش یادداشت روزانه و انگیزه امروز
-# =========================================================================
+# 💌 یادداشت روزانه
 daily_love_quotes = [
     "حضور تو مثل یک فنجان چای گرم وسط یک عصر پاییزی، به تمام دنیام آرامش میده...",
     "شاید هر روز با هم حرف بزنیم، اما هر بار شنیدن صدات و دیدن پیامت حس بار اول رو داره ❤️",
@@ -357,7 +421,7 @@ tabs = st.tabs([
     "💌 نامه محرمانه",
 ])
 
-# ================= 1. روزشمار زنده (Live Timer) =================
+# ================= 1. روزشمار زنده =================
 with tabs[0]:
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
     st.markdown(
@@ -375,56 +439,14 @@ with tabs[0]:
     <head>
         <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
         <style>
-            * {
-                box-sizing: border-box;
-                font-family: 'Vazirmatn', sans-serif !important;
-                margin: 0;
-                padding: 0;
-            }
-            body {
-                background: transparent;
-                color: #f8fafc;
-            }
-            .live-counter-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
-                margin: 10px 0;
-                direction: rtl;
-            }
-            .live-counter-box {
-                background: rgba(244, 114, 182, 0.14);
-                border: 1px solid rgba(244, 114, 182, 0.35);
-                border-radius: 16px;
-                padding: 12px 6px;
-                text-align: center;
-            }
-            .live-val {
-                font-size: 28px;
-                font-weight: 900;
-                color: #f472b6;
-                direction: ltr;
-                line-height: 1.1;
-                font-variant-numeric: tabular-nums;
-            }
-            .live-lbl {
-                font-size: 12.5px;
-                font-weight: 700;
-                color: #cbd5e1;
-                margin-top: 4px;
-            }
-            .summary-box {
-                text-align: center;
-                margin-top: 10px;
-                padding: 10px;
-                background: rgba(244, 114, 182, 0.1);
-                border-radius: 12px;
-            }
-            .summary-text {
-                color: #fbcfe8;
-                font-size: 13.5px;
-                font-weight: 700;
-            }
+            * { box-sizing: border-box; font-family: 'Vazirmatn', sans-serif !important; margin: 0; padding: 0; }
+            body { background: transparent; color: #f8fafc; }
+            .live-counter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; direction: rtl; }
+            .live-counter-box { background: rgba(244, 114, 182, 0.14); border: 1px solid rgba(244, 114, 182, 0.35); border-radius: 16px; padding: 12px 6px; text-align: center; }
+            .live-val { font-size: 28px; font-weight: 900; color: #f472b6; direction: ltr; line-height: 1.1; font-variant-numeric: tabular-nums; }
+            .live-lbl { font-size: 12.5px; font-weight: 700; color: #cbd5e1; margin-top: 4px; }
+            .summary-box { text-align: center; margin-top: 10px; padding: 10px; background: rgba(244, 114, 182, 0.1); border-radius: 12px; }
+            .summary-text { color: #fbcfe8; font-size: 13.5px; font-weight: 700; }
         </style>
     </head>
     <body>
@@ -608,7 +630,7 @@ with tabs[3]:
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-# ================= 5. نامه محرمانه با رمز «یه بوس طلبم» =================
+# ================= 5. نامه محرمانه =================
 with tabs[4]:
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
     st.markdown(
